@@ -21,7 +21,7 @@
 
     <style>
         .reddiv {border: 1px solid red;}
-        body > div {margin: 10px; border-bottom: 1px solid #d1d1d1; padding:5px;}
+        body > div {margin: 10px; border-bottom: 1px solid #d1d1d1; padding:10px;}
         .section, h1, h2, h3, h4, h5, h6 {display:inline-block; padding:0; margin:3px;}
         .effectDemo * {margin: 5px; padding:3px;}
     </style>
@@ -47,6 +47,7 @@
     <div id='ref1'></div>
     <div id='domref1'></div>
     <div id='effect1'></div>
+    <div id='hook1'></div>
 
     <script type="importmap">
         {
@@ -410,6 +411,22 @@
             }
         }
 
+
+        ///////////////////////////////////////////
+        // a simple own implement of useReducer:
+        /*
+        function useReducer(reducer, initialState) {
+            const [state, setState] = useState(initialState);
+
+            function dispatch(action) {
+                const nextState = reducer(state, action);
+                setState(nextState);
+            }
+
+            return [state, dispatch];
+        } 
+        */   
+
         function ReducerDemo() {
             var initialTasks = [
                 {id:1, text:'task 1'},
@@ -704,19 +721,37 @@
                 </div>
             )
         }
+        ReactDOM.render( <EffectDiv   />, document.getElementById('effect1'));
 
-        function  EffectDemo(){   
+
+
+
+        function useOwnHook(id) {
+            const [c, setC] = useState(0);
+
+            useEffect(()=>{
+                console.log(id + ' ' + c);
+                document.getElementById(id).innerHTML = 'set by my own hook. ' + c;   
+            }, [c]);
             
-            const [show, setShow] = useState(true);
+
+            return [c, setC];
+        }
+        
+        function  HookDemo(){   
+            
+            const [a, setA] = useOwnHook('hookchild_1');
+            const [b, setB] = useOwnHook('hookchild_2');
 
             return (
                 <div >
-                    effect demo:  show: {show ? 1: 0} <button onClick={()=> {setShow(!show)} }>show/hide</button>
-                    { show &&  <EffectDiv /> }
+                    Customer Hook demo:  
+                    <div id='hookchild_1' onClick={() => setA(a+1)}>aaa</div>
+                    <div id='hookchild_2' onClick={() => setB(b+1)}>bbb</div>
                 </div>
             )
         }
-        ReactDOM.render( <EffectDiv   />, document.getElementById('effect1'));
+        ReactDOM.render( <HookDemo   />, document.getElementById('hook1'));
 
 
     </script>
